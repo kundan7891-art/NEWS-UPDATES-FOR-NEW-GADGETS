@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Mobile Updates Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #1e293b;
+            padding: 1.5rem;
+        }
+
+        body.dark {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        body.dark .header {
+            border-bottom-color: #334155;
+        }
+        h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .theme-toggle {
+            background: #e2e8f0;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: #1e293b;
+        }
+        body.dark .theme-toggle {
+            background: #334155;
+            color: #f1f5f9;
+        }
+
+        /* filter bar */
+        .filter-bar {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 0.8rem 1rem;
+            border-radius: 2rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        body.dark .filter-bar {
+            background: #1e293b;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .filter-btn {
+            background: transparent;
+            border: 1px solid #94a3b8;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: inherit;
+        }
+        .filter-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+        body.dark .filter-btn.active {
+            background: #2563eb;
+        }
+
+        /* updates grid */
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.1s ease;
+        }
+        body.dark .card {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card:hover {
+            transform: translateY(-3px);
+        }
+        .model-badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #1e40af;
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        body.dark .model-badge {
+            background: #2d3a5e;
+            color: #a5c9ff;
+        }
+        .update-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .date {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        body.dark .date {
+            color: #94a3b8;
+        }
+        .description {
+            color: #334155;
+            line-height: 1.5;
+            margin-bottom: 1.2rem;
+        }
+        body.dark .description {
+            color: #cbd5e1;
+        }
+        .tag {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+        body.dark .tag {
+            background: #0f172a;
+        }
+        .empty-msg {
+            text-align: center;
+            padding: 3rem;
+            grid-column: 1 / -1;
+            font-size: 1.2rem;
+            color: #64748b;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            color: #64748b;
+            font-size: 0.8rem;
+            border-top: 1px solid #cbd5e1;
+        }
+        body.dark footer {
+            border-top-color: #334155;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📱 Mobile Updates • News & Patches</h1>
+        <button class="theme-toggle" id="themeToggle">🌓 Dark / Light</button>
+    </div>
+
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Android">Android</button>
+        <button class="filter-btn" data-filter="iOS">iOS</button>
+        <button class="filter-btn" data-filter="Security">Security</button>
+        <button class="filter-btn" data-filter="Feature">Feature</button>
+    </div>
+
+    <div class="updates-grid" id="updatesGrid"></div>
+    <footer>
+        ⚡ Free mobile update tracker — add your own updates by editing the `updates` array in the code.
+    </footer>
+</div>
+
+<script>
+    // ========================
+    // 📝 EDIT YOUR UPDATES HERE
+    // ========================
+    const updates = [
+        {
+            model: "Pixel 8 Pro",
+            title: "Android 15 Beta 3",
+            date: "May 18, 2026",
+            description: "New private space, satellite messaging, and better battery optimization. Stable release expected June.",
+            tags: ["Android", "Feature"]
+        },
+        {
+            model: "iPhone 15 Pro",
+            title: "iOS 18.5 Update",
+            date: "May 15, 2026",
+            description: "Apple Intelligence improvements, new Siri features, and call recording with AI transcript.",
+            tags: ["iOS", "Feature"]
+        },
+        {
+            model: "Samsung Galaxy S24 Ultra",
+            title: "May 2026 Security Patch",
+            date: "May 10, 2026",
+            description: "Critical vulnerability fixes and camera stability improvements. One UI 7.1 refinements.",
+            tags: ["Android", "Security"]
+        },
+        {
+            model: "Xiaomi 14 Ultra",
+            title: "HyperOS 2.1 Rolling Out",
+            date: "May 8, 2026",
+            description: "Smoother animations, better RAM management, and new AI photo editing tools.",
+            tags: ["Android", "Feature"]
+        },
+        {
+            model: "OnePlus 12",
+            title: "OxygenOS 15.5 Update",
+            date: "May 5, 2026",
+            description: "Fluid cloud experience, improved gaming performance, and June security patches.",
+            tags: ["Android"]
+        },
+        {
+            model: "iPhone 14",
+            title: "iOS 18.5 Security Response",
+            date: "May 2, 2026",
+            description: "Emergency fix for WebKit zero‑day. Recommended for all users.",
+            tags: ["iOS", "Security"]
+        }
+    ];
+    // ========================
+    // END OF UPDATES SECTION
+    // ========================
+
+    let currentFilter = "all";
+    const grid = document.getElementById("updatesGrid");
+
+    function renderUpdates() {
+        let filtered = updates;
+        if (currentFilter !== "all") {
+            filtered = updates.filter(update => update.tags.includes(currentFilter));
+        }
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="empty-msg">📭 No updates found for "${currentFilter}". Check back later!</div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(update => `
+            <div class="card">
+                <div class="model-badge">${escapeHtml(update.model)}</div>
+                <div class="update-title">${escapeHtml(update.title)}</div>
+                <div class="date">📅 ${escapeHtml(update.date)}</div>
+                <div class="description">${escapeHtml(update.description)}</div>
+                <div>
+                    ${update.tags.map(tag => `<span class="tag">#${escapeHtml(tag)}</span>`).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // filter buttons
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentFilter = btn.getAttribute("data-filter");
+            renderUpdates();
+        });
+    });
+
+    // dark mode toggle
+    const themeToggle = document.getElementById("themeToggle");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (localStorage.getItem("theme") === "dark" || (!localStorage.getItem("theme") && prefersDark)) {
+        document.body.classList.add("dark");
+    }
+    themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+        localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+    });
+
+    renderUpdates();
+</script>
+</body>
+</html>
